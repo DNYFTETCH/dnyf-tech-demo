@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  lmstudio:
+    # Note: LM Studio doesn't officially support Linux CLI yet
+    # Alternative: Use llama.cpp server directly
+    image: ghcr.io/ggerganov/llama.cpp:server
+    ports:
+      - "1234:8080"
+    volumes:
+      - ./models:/models
+      - ./workspace:/workspace
+    command: >
+      --model /models/deepseek-r1-distill-qwen-7b.Q4_K_M.gguf
+      --ctx-size 8192
+      --n-gpu-layers 35  # Adjust based on your GPU
+      --port 8080
+      --host 0.0.0.0
+    deploy:
+      resources:
+        limits:
+          memory: 8G  # Prevent OOM
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  dnyf-backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.edge  # Optimized for low RAM
+    ports:
+      - "8000:8000"
+    environment:
+      - LMSTUDIO_URL=http://lmstudio:8080/v1
+      - PROJECT_ROOT=/workspace
+      - LOG_LEVEL=WARNING  # Reduce I/O on SD cards
+      - MAX_AUTONOMOUS_TURNS=10  # Conserve resources
+    volumes:
+      - ./workspace:/workspace
+      - ./logs:/app/logs
+    depends_on:
+      lmstudio:
+        condition: service_healthy
+    restart: unless-stopped
+
+  dnyf-frontend:
+    image: nginx:alpine
+    ports:
+      - "3000:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+      - ./frontend/nginx.edge.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - dnyf-backend
+    restart: unless-stopped
+
+volumes:
+  workspace:
+  logs:
