@@ -1,0 +1,19 @@
+plugins:
+  enabled:
+    - name: docker
+      config:
+        default_image: "python:3.11-slim"
+        network_mode: "none"
+    - name: aws
+      config:
+        profile: "dnyf-sandbox"  # Use isolated AWS profile
+        region: "us-east-1"
+  
+  disabled:
+    - name: kubernetes  # Too risky for default install
+    - name: terraform
+
+security:
+  require_approval_for: ["high", "critical"]  # Risk levels needing human approval
+  audit_all_plugin_calls: true
+  max_plugin_execution_time: 60  # seconds
