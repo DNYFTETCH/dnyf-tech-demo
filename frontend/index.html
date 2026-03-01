@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DNYF TECH Demo</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="logo">
+        <span class="logo-icon">⚡</span>
+        <h1>DNYF TECH <span class="badge">Demo</span></h1>
+      </div>
+      <div class="status" id="serverStatus">🟡 Connecting...</div>
+    </header>
+
+    <main>
+      <section class="input-panel">
+        <h2>🎯 Submit Autonomous Task</h2>
+        <form id="taskForm">
+          <textarea id="goalInput" placeholder="e.g., Add JWT authentication to Flask app" required></textarea>
+          <div class="options">
+            <label><input type="checkbox" id="mockMode" checked> Mock Mode (safe demo)</label>
+            <select id="presetTask">
+              <option value="">-- Try a preset --</option>
+              <option value="Add user login with JWT">🔐 Auth Module</option>
+              <option value="Refactor database models to use SQLAlchemy">🗄️ DB Refactor</option>
+              <option value="Write unit tests for auth module">🧪 Add Tests</option>
+            </select>
+          </div>
+          <button type="submit" id="submitBtn">🚀 Launch Agent</button>
+        </form>
+      </section>
+
+      <section class="output-panel">
+        <div class="tabs">
+          <button class="tab active" data-tab="logs">📋 Live Logs</button>
+          <button class="tab" data-tab="result">✅ Result</button>
+          <button class="tab" data-tab="config">⚙️ Config</button>
+        </div>
+        
+        <div id="logs" class="tab-content active">
+          <div id="logStream" class="log-stream"></div>
+          <div class="log-controls">
+            <button id="clearLogs">🗑️ Clear</button>
+            <button id="downloadLogs">💾 Download</button>
+          </div>
+        </div>
+        
+        <div id="result" class="tab-content">
+          <div id="resultContent" class="result-placeholder">Submit a task to see results...</div>
+        </div>
+        
+        <div id="config" class="tab-content">
+          <pre id="configView">{ "mode": "mock", "model": "deepseek-r1-distill-qwen-7b", "guardrails": "enabled" }</pre>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>DNYF TECH Demo • Offline-First Autonomous Module • <a href="#" id="healthLink">API Health</a></p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
